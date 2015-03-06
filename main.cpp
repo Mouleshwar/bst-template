@@ -258,17 +258,39 @@ T* BinarySearchTree::inOrderSucc(T *datap) {
     TreeNode *curr;
     curr = search(datap);
     if(curr->right!=NULL) {
-        return min(datap);
-    }
-    else {
-        TreeNode *n = search(datap);
-        TreeNode *p = n->parentNode;
-        while(p!=NULL && n==p->right) {
-            n=p;
+        return min(curr);
+    } else {
+        TreeNode *p = curr->parentNode;
+        while(p!=NULL && curr==p->right) {
+            curr = p;
             p = p->right;
         }
         return p->info;
     }
+}
+
+template <class T>
+T* BinarySearchTree::inOrderPred(T *datap) {
+    TreeNode *curr;
+    TreeNode *tempRoot = root;
+    curr = search(datap);
+    if(curr->left!=NULL) {
+        return max(curr);
+    } else {
+        TreeNode *p = curr->parentNode;
+        while(root!=NULL) {
+            if(curr->info > root->info) {
+                p = tempRoot;
+                tempRoot = tempRoot->right;
+            } else if(curr->info < tempRoot->info) {
+                tempRoot = tempRoot->left;
+            } else {
+                break;
+            }
+        }
+        return p->info;
+    }
+
 }
 
 int main() {
