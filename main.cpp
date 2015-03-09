@@ -1,21 +1,22 @@
 #include <iostream>
+#include <queue>
 
 using namespace std;
 
-template<class T>
+template <class T>
 class TreeNode {
 public:
     T *info;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode *parentNode;
+    TreeNode<T> *left;
+    TreeNode<T> *right;
+    TreeNode<T> *parentNode;
 };
 
 template <class T>
 class BinarySearchTree {
 
 private:
-    TreeNode *root;
+    TreeNode<T> *root;
 
 public:
     BinarySearchTree() {
@@ -26,7 +27,7 @@ public:
     };
     T* insert(T*);
     void remove(T*);
-    T* search(T*);
+    TreeNode<T> *search(T*);
     T* min();
     T* max();
     T* inOrderSucc(T*);
@@ -36,16 +37,16 @@ public:
     void printPreOrder();
     void printPostOrder();
 
-    T *min(TreeNode *indexRoot);
+    T *min(TreeNode<T> *indexRoot);
 
-    T *max(TreeNode *indexRoot);
+    T *max(TreeNode<T> *indexRoot);
 };
 
 template <class T>
 T* BinarySearchTree<T>::insert(T *datap) {
-    TreeNode *t = new TreeNode;
-    TreeNode *parent;
-    t->info = *datap;
+    TreeNode<T> *t = new TreeNode<T>;
+    TreeNode<T> *parent;
+    t->info = datap;
     t->left = NULL;
     t->right = NULL;
     t->parentNode = NULL;
@@ -54,7 +55,7 @@ T* BinarySearchTree<T>::insert(T *datap) {
         root = t;
         return root->info;
     } else {
-        TreeNode *curr;
+        TreeNode<T> *curr;
         curr = root;
         while(curr){
             parent = curr;
@@ -79,23 +80,23 @@ T* BinarySearchTree<T>::insert(T *datap) {
 }
 
 template <class T>
-void BinarySearchTree::remove(T *datap){
+void BinarySearchTree<T>::remove(T *datap){
     bool found = false;
     if(isEmpty()) {
         cout<<" The tree is empty!!\n";
         return;
     }
-    TreeNode *curr;
-    TreeNode *parent;
+    TreeNode<T> *curr;
+    TreeNode<T> *parent;
     curr = root;
-    parent = (TreeNode*) NULL;
+    parent = (TreeNode<T>*) NULL;
     while(curr!=NULL){
-        if(curr->info == *datap){
+        if(curr->info == datap){
             found = true;
             break;
         } else {
             parent = curr;
-            if(*datap > curr->info) {
+            if(datap > curr->info) {
                 curr = curr->right;
             } else {
                 curr = curr->left;
@@ -161,7 +162,7 @@ void BinarySearchTree::remove(T *datap){
 
     //if the node to be deleted has 2 childs, replace the node with smallest value in right subtree
     if(curr->right!=NULL && curr->left!=NULL) {
-        TreeNode *chkr;
+        TreeNode<T> *chkr;
         chkr = curr->right;
         if(chkr->left==NULL && chkr->right==NULL) {
             chkr->parentNode = curr->parentNode;
@@ -170,8 +171,8 @@ void BinarySearchTree::remove(T *datap){
             curr->right = NULL;
         } else {
             if((curr->right)->left!=NULL) {
-                TreeNode *lcurr;
-                TreeNode *lcurrp;
+                TreeNode<T> *lcurr;
+                TreeNode<T> *lcurrp;
                 lcurrp = curr->right;
                 lcurr = (curr->right)->left;
                 while(lcurr->left!=NULL) {
@@ -182,7 +183,7 @@ void BinarySearchTree::remove(T *datap){
                 delete lcurr;
                 lcurrp->left = NULL;
             } else {
-                TreeNode *tmp;
+                TreeNode<T> *tmp;
                 tmp = curr->right;
                 curr->info = tmp->info;
                 curr->right = tmp->right;
@@ -194,16 +195,16 @@ void BinarySearchTree::remove(T *datap){
 }
 
 template <class T>
-TreeNode* BinarySearchTree::search(T *datap) {
+TreeNode<T>* BinarySearchTree<T>::search(T *datap) {
     bool found = false;
     if(isEmpty()) {
         cout<<" The tree is empty!!\n";
         return NULL;
     }
-    TreeNode *curr;
-    TreeNode *parent;
+    TreeNode<T> *curr;
+    TreeNode<T> *parent;
     curr = root;
-    parent = (TreeNode*) NULL;
+    parent = (TreeNode<T>*) NULL;
     while(curr!=NULL) {
         if(curr->info == *datap) {
             found = true;
@@ -226,8 +227,8 @@ TreeNode* BinarySearchTree::search(T *datap) {
 }
 
 template <class T>
-T* BinarySearchTree::min(TreeNode *indexRoot) {
-    TreeNode *curr;
+T* BinarySearchTree<T>::min(TreeNode<T> *indexRoot) {
+    TreeNode<T> *curr;
     if(indexRoot!=NULL) {
         curr = indexRoot;
     } else {
@@ -240,8 +241,8 @@ T* BinarySearchTree::min(TreeNode *indexRoot) {
 }
 
 template <class T>
-T* BinarySearchTree::max(TreeNode *indexRoot) {
-    TreeNode *curr;
+T* BinarySearchTree<T>::max(TreeNode<T> *indexRoot) {
+    TreeNode<T> *curr;
     if(indexRoot!=NULL) {
         curr = indexRoot;
     } else {
@@ -254,13 +255,13 @@ T* BinarySearchTree::max(TreeNode *indexRoot) {
 }
 
 template <class T>
-T* BinarySearchTree::inOrderSucc(T *datap) {
-    TreeNode *curr;
+T* BinarySearchTree<T>::inOrderSucc(T *datap) {
+    TreeNode<T> *curr;
     curr = search(datap);
     if(curr->right!=NULL) {
         return min(curr);
     } else {
-        TreeNode *p = curr->parentNode;
+        TreeNode<T>* p = curr->parentNode;
         while(p!=NULL && curr==p->right) {
             curr = p;
             p = p->right;
@@ -270,14 +271,15 @@ T* BinarySearchTree::inOrderSucc(T *datap) {
 }
 
 template <class T>
-T* BinarySearchTree::inOrderPred(T *datap) {
-    TreeNode *curr;
-    TreeNode *tempRoot = root;
+T* BinarySearchTree<T>::inOrderPred(T *datap) {
+    TreeNode<T> *curr;
+    TreeNode<T> *tempRoot = root;
     curr = search(datap);
     if(curr->left!=NULL) {
         return max(curr);
     } else {
-        TreeNode *p = curr->parentNode;
+        TreeNode<T> *p = NULL;
+        p = curr->parentNode;
         while(root!=NULL) {
             if(curr->info > root->info) {
                 p = tempRoot;
@@ -293,7 +295,45 @@ T* BinarySearchTree::inOrderPred(T *datap) {
 
 }
 
+template <class T>
+int BinarySearchTree<T>::height() {
+    TreeNode<T> *root = root;
+
+    if (root==NULL){
+        return 0;
+    }
+
+    queue<TreeNode<T>*> q;
+
+    q.push(root);
+    int height = 0;
+
+    while (1)
+    {
+        int nodeCount = q.size();
+        if (nodeCount == 0)
+            return height;
+
+        height++;
+
+        while (nodeCount > 0)
+        {
+            TreeNode<T> *node = q.front();
+            q.pop();
+            if (node->left != NULL)
+                q.push(node->left);
+            if (node->right != NULL)
+                q.push(node->right);
+            nodeCount--;
+        }
+    }
+}
 int main() {
-    cout << "Hello, World!" << endl;
+    BinarySearchTree<int> tempBST;
+    int temp = 1;
+    int *tempp = &temp;
+    for(int i=0;i<10;i++) {
+        tempBST.insert(tempp++);
+    }
     return 0;
 }
